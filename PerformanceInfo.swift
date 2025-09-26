@@ -2,7 +2,7 @@
 //  PerformanceInfo.swift
 //  
 //
-//  Created by 熊韦华 on 2021/9/18.
+//  Created by BigHiung on 2021/9/18.
 //
 
 /*
