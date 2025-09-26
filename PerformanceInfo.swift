@@ -9,7 +9,7 @@
 PerformanceInfo.swift
 iOS / macOS Performance Monitoring Suite
 
-Copyright (c) 2021-2025 熊韦华 (Kuma Osa)
+Copyright (c) 2021-2025 BigHiung
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@ furnished to do so, subject to the following conditions:
 PerformanceInfo.swift
 iOS / macOS 性能监控套件
 
-版权所有 (c) 2021-2025 熊韦华
+版权所有 (c) 2021-2025 BigHiung
 
 特此免费授予任何获得本软件及相关文档的人士无限制使用本软件的权利，包括但不限于使用、复制、修改、合并、发布、分发、再授权及/或销售软件的副本，并允许向其提供软件的人如此操作，条件如下：
 
