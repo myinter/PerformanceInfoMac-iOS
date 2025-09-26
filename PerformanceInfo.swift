@@ -58,7 +58,8 @@ public enum DeviceThermalState: Int {
 
 public enum DEV_TYPE: Int {
     case IPHONE
-    case MAC
+    case APPLE_SILICON_MAC
+    case INTEL_MAC
     case ARM_SIMULATOR
     case INTEL_SIMULATOR
 }
@@ -213,7 +214,11 @@ public class PerformanceInfo {
         #elseif os(iOS) || os(tvOS) || os(watchOS)
             return .IPHONE
             #elseif os(macOS)
-            return .MAC
+                #if arch(x86_64) || arch(i386)
+                return .INTEL_MAC
+                #elseif arch(arm64)
+                return .APPLE_SILICON_MAC
+                #endif
             #else
             return .MAC
         #endif
@@ -291,11 +296,11 @@ public class PerformanceInfo {
     public static let performanceLevel: PerformanceLevel = {
 
         let cpuTypeRaw = PerformanceInfo.CPU_type.rawValue
-        
+
         switch DEV_type {
         case .IPHONE:
 
-            if cpuTypeRaw >= CPU_TYPE.UpperThanA15.rawValue {
+            if cpuTypeRaw >= CPU_TYPE.UpperThanA15.rawValue && PerformanceInfo.totalMemoryMB >= 6144 {
                 return .highPerf
             }
 
@@ -303,13 +308,23 @@ public class PerformanceInfo {
                 return .midPerf
             }
 
-        case .MAC:
+        case .APPLE_SILICON_MAC:
 
             if cpuTypeRaw > CPU_TYPE.M2_APPLE.rawValue && PerformanceInfo.totalMemoryMB >= 20000 {
                 return .highPerf
             }
 
             if cpuTypeRaw >= CPU_TYPE.M1_APPLE.rawValue {
+                return .midPerf
+            }
+
+        case .INTEL_MAC:
+
+            if PerformanceInfo.totalMemoryMB > 32768 {
+                return .highPerf
+            }
+
+            if PerformanceInfo.totalMemoryMB >= 16384 {
                 return .midPerf
             }
 
@@ -645,20 +660,20 @@ public class PerformanceInfo {
         }
         return totalUsage
     }
-    
+
     /*
      Obtain the creation time of the current process,
      which is mostly used to calculate the startup time consumption of the App.
      */
 
     public static var processStartTimestamp: TimeInterval {
-        
+
         // 使用 sysctl 获取进程信息
         let pid = getpid()
         var kinfo = kinfo_proc()
         var mib : [Int32] = [CTL_KERN, KERN_PROC, KERN_PROC_PID, pid]
         var sizeKinfo = MemoryLayout<kinfo_proc>.stride
-        
+
         let result = sysctl(&mib, UInt32(mib.count), &kinfo, &sizeKinfo, nil, 0)
         if result == 0 {
             let sec = Double(kinfo.kp_proc.p_un.__p_starttime.tv_sec)
